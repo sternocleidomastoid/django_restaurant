@@ -35,8 +35,8 @@ class SaleCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
 
     def post(self, request, format=None):
-        print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
-        return Response(request)
+        pass
+        #return Response(request)
 
     def _set_defaults_for_some_fields(self, form):
         form.instance.cashier = self.request.user
