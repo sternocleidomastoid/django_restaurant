@@ -1,0 +1,9 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <h1>Sales</h1>
+    {% for sale in object_list %}
+        <h3><a  href="{% url 'restaurant-sale-detail' sale.id %}">
+            {{ sale.id }} -- {{ sale.transaction.date }} -- {{ sale.transaction.cashier }} -- {{ sale.status }}
+        </a></h3>
+    {% endfor %}
+{% endblock content %}

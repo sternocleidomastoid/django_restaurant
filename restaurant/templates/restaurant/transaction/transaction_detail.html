@@ -1,0 +1,19 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <div>
+        <a class="nav-bar nav" href="{% url 'restaurant-transactions' %}">back</a>
+    </div>
+    <h1>ID: {{ object.id }}</h1>
+    <p>Date: {{ object.date }}</p>
+    <p>Price: {{ object.total_price }}</p>
+    <p>Sales: #wait</p>
+    <p>Cashier: {{ object.cashier }}</p>
+    <p>Status: {{ object.status }}</p>
+
+    {% if request.user.is_staff %}
+        <div>
+            <a  class="btn btn-secondary" href="{% url 'restaurant-sale-update' object.id %}">Change Status</a>
+        </div>
+    {% endif %}
+
+{% endblock content %}

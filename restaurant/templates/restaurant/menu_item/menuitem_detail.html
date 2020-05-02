@@ -1,0 +1,24 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <div>
+        <a class="nav-bar nav" href="{% url 'restaurant-menuitems' %}">back</a>
+    </div>
+    <h1>{{ object.name }}</h1>
+    <p>Author: {{ object.author }}</p>
+    <p>Price: {{ object.price }}</p>
+    <p>Ingredients: {% for ingredient in object.ingredients.all %}{{ ingredient }}, {% endfor %}</p>
+    <p>Status: {{ object.status }}</p>
+
+    {% if request.user.is_staff %}
+        <div>
+            <a  class="btn btn-secondary" href="{% url 'restaurant-menuitem-update' object.id %}">Change</a>
+            <a  class="btn btn-danger" href="{% url 'restaurant-menuitem-delete' object.id %}">Delete</a>
+        </div>
+        {% ifequal object.status "disabled" %}
+            <div>
+            <small class="text-muted">Click Change to enable</small>
+            </div>
+        {% endifequal %}
+    {% endif %}
+
+{% endblock content %}

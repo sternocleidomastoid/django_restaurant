@@ -1,0 +1,15 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <div>
+        <a class="nav-bar nav" href="{% url 'restaurant-ingredients' %}">back</a>
+    </div>
+    <h1>{{ object.name }}</h1>
+    <p>Quantity: {{ object.quantity }} {{ object.name.unit }}</p>
+
+    {% if request.user.is_staff %}
+        <div>
+            <a  class="btn btn-secondary" href="{% url 'restaurant-ingredient-update' object.id %}">Change</a>
+            <a  class="btn btn-danger" href="{% url 'restaurant-ingredient-delete' object.id %}">Delete</a>
+        </div>
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,12 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <h1>Ingredients</h1>
+    {% if request.user.is_staff %}
+        <a class="nav-bar nav" href="{% url 'restaurant-ingredient-create' %}">Set Ingredient</a>
+    {% endif %}
+
+    {% for ingredient in object_list %}
+        <h3><a  href="{% url 'restaurant-ingredient-detail' ingredient.id %}">{{ ingredient.name }}</a></h3>
+        <p>Quantity: {{ ingredient.quantity }} {{ ingredient.name.unit }}</p>
+    {% endfor %}
+{% endblock content %}

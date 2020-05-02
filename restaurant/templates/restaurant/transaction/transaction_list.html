@@ -1,0 +1,12 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <h1>Transactions</h1>
+    {% if request.user.is_staff %}
+        <a class="nav-bar nav" href="{% url 'restaurant-transaction-create' %}">Process Transaction</a>
+    {% endif %}
+
+    {% for trans in object_list %}
+        <h3><a  href="{% url 'restaurant-transaction-detail' trans.id %}">
+            {{ trans.id }} -- {{ trans.date }} -- {{ trans.total_price }} -- {{ trans.cashier }} -- {{ trans.status }}</a></h3>
+    {% endfor %}
+{% endblock content %}

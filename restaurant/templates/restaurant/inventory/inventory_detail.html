@@ -1,0 +1,17 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <div>
+        <a class="nav-bar nav" href="{% url 'restaurant-inventories' %}">back</a>
+    </div>
+    <h1>{{ object.name }}</h1>
+    <p>Total: {{ object.get_total }}</p>
+    <p>Low Level Threshold: {{ object.low_level_threshold }}</p>
+    <p>{{ object.price }}/{{ object.unit }}</p>
+
+    {% if request.user.is_staff %}
+        <div>
+        <a  class="btn btn-secondary" href="{% url 'restaurant-inventory-update' object.id %}">Change</a>
+        <a  class="btn btn-danger" href="{% url 'restaurant-inventory-delete' object.id %}">Delete</a>
+        </div>
+    {% endif %}
+{% endblock content %}

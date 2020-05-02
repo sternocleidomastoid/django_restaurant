@@ -1,0 +1,15 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <h1>Inventories</h1>
+    {% if request.user.is_staff %}
+        <a class="nav-bar nav" href="{% url 'restaurant-inventory-create' %}">Add Inventory Item</a>
+    {% endif %}
+
+    {% for inventory in object_list %}
+        <h3><a  href="{% url 'restaurant-inventory-detail' inventory.id %}">
+            {{ inventory.name }}
+            {% if inventory.is_low_level %}<text class="text-danger"> [LOW]</text>{% endif %}
+        </a></h3>
+        <p>Total: {{ inventory.total }} {{ inventory.price }}/{{ inventory.unit }}</p>
+    {% endfor %}
+{% endblock content %}

@@ -1,0 +1,12 @@
+{% extends "restaurant/base.html" %}
+{% block content %}
+    <h1>Sales</h1>
+    {% for sale in sales %}
+        <h3>{{ sale.id }}</h3>
+        <p>Menu Items:
+            {% for menu_item in sale.menu_items %}
+                {{ menu_item }} : {{ menu_item.price }},
+            {% endfor %}
+        </p>
+    {% endfor %}
+{% endblock content %}
