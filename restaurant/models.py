@@ -90,10 +90,12 @@ class Transaction(models.Model):
     date = models.DateField(default=timezone.now)
     total_price = models.DecimalField(max_digits=7, decimal_places=2)
 
+    PRE_VALID = 'pre_valid'
     VALID = 'valid'
     RETRACTED = 'retracted'
     RETRACTED_INVENTORY = 'retracted_inventory'
     STATUS = [
+        (PRE_VALID, 'pre_valid'),
         (VALID, 'valid'),
         (RETRACTED, 'retracted -- not counted as valid; cancelled'),
         (RETRACTED_INVENTORY, 'retracted_inventory -- cancelled; undo inventory subtraction')
@@ -102,7 +104,7 @@ class Transaction(models.Model):
     status = models.CharField(
         max_length=32,
         choices=STATUS,
-        default=VALID,
+        default=PRE_VALID,
     )
 
     def __str__(self):
@@ -115,10 +117,12 @@ class Sale(models.Model):
     note = models.CharField(max_length=200)
     quantity = models.IntegerField(default=0)
 
+    PRE_VALID = 'pre_valid'
     VALID = 'valid'
     RETRACTED = 'retracted'
     RETRACTED_INVENTORY = 'retracted_inventory'
     STATUS = [
+        (PRE_VALID, 'pre_valid'),
         (VALID, 'valid'),
         (RETRACTED, 'retracted -- not counted as valid; cancelled'),
         (RETRACTED_INVENTORY, 'retracted_inventory -- cancelled; undo inventory subtraction')
@@ -127,7 +131,7 @@ class Sale(models.Model):
     status = models.CharField(
         max_length=32,
         choices=STATUS,
-        default=VALID,
+        default=PRE_VALID,
     )
 
     def get_absolute_url(self):

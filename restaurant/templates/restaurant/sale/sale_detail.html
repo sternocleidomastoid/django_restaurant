@@ -3,6 +3,7 @@
     <div>
         <a class="nav-bar nav" href="{% url 'restaurant-sales' %}">back</a>
     </div>
+    <h1>Transaction ID: {{ object.transaction }}</h1>
     <h1>ID: {{ object.id }}</h1>
     <p>MenuItem: {{ object.menu_item }}</p>
     <p>Quantity: {{ object.quantity }}</p>

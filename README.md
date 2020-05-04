@@ -8,3 +8,7 @@ STEPS:
 4. python manage.py makemigrations
 5. python manage.py migrate
 6. python manage.py runserver
+7. populate initial data:
+    python manage.py shell
+    from restaurant.fixtures.populate import populate
+    populate()

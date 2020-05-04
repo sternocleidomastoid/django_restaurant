@@ -1,9 +1,10 @@
+import decimal
+
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 
 from restaurant.forms import SaleForm
-from restaurant.models import Transaction
-from restaurant.views.sale_views import SaleCreateView
+from restaurant.models import Transaction, MenuItem
 
 
 def home(request):
@@ -15,13 +16,27 @@ def about(request):
 
 
 def process_transaction(request):
-    #cashier = models.ForeignKey(User, blank=True, null=True, on_delete=models.PROTECT)
-    #note = models.TextField(blank=True)
-    #date = models.DateField(default=timezone.now)
-    #total_price
-    # trans = Transaction()
-    # trans.save()
-    form = SaleForm
+    if request.method == "POST" and request.POST.get('trans_ftotal'):
+        pass
+    elif request.method == "POST" and request.POST.get('trans_rtotal'):
+        form = SaleForm(request.POST)
+        trans, rtotal = request.POST.get('trans_rtotal').split("_")
+        trans = int(trans)
+        rtotal = decimal.Decimal(rtotal)
+        if form.is_valid():
+            amount = form.cleaned_data.get('quantity')
+            price = MenuItem.objects.get(name=form.instance.menu_item).price
+            form.instance.transaction_id = trans
+            rtotal += amount*price
+            form.save()
+    else:
+        trans = Transaction(cashier=request.user, total_price=0)
+        trans.save()
+        trans = trans.id
+        rtotal = 0
+        form = SaleForm()
+    return render(request, 'restaurant/sale/sale_form.html', {'form': form, 'trans': trans, 'rtotal': rtotal})
+
 
 
 
