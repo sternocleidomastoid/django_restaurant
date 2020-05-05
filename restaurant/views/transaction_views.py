@@ -2,16 +2,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
-from django.http import HttpResponseBadRequest
-
-#from restaurant.forms import SaleFormSet
-from restaurant.models import Transaction
+from restaurant.models import Transaction, Sale
 
 
 class TransactionListView(ListView):
     model = Transaction
     template_name = 'restaurant/transaction/transaction_list.html'
-    ordering = ['-date']
+    ordering = ['-id']
 
 
 class TransactionDetailView(DetailView):
@@ -19,36 +16,22 @@ class TransactionDetailView(DetailView):
     template_name = 'restaurant/transaction/transaction_detail.html'
 
 
-# class TransactionCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-#     model = Transaction
-#     template_name = 'restaurant/transaction/transaction_form.html'
-#     fields = []
-#     success_url = None
-#
-#     def get_context_data(self, **kwargs):
-#         data = super(TransactionCreateView, self).get_context_data(**kwargs)
-#         if self.request.POST:
-#             data['sales'] = SaleFormSet(self.request.POST)
-#         else:
-#             data['sales'] = SaleFormSet()
-#         return data
-#
-#     def form_valid(self, form):
-#         form.instance.total_price = 100
-#         context = self.get_context_data()
-#         sales = context['sales']
-#         with transaction.atomic():
-#             form.instance.cashier = self.request.user
-#             self.object = form.save()
-#
-#             if sales.is_valid():
-#                 sales.instance = self.object
-#
-#                 sales.save()
-#         return super(TransactionCreateView, self).form_valid(form)
-#
-#     def get_success_url(self):
-#         return reverse_lazy('restaurant-menuitems')
-#
-#     def test_func(self):
-#         return self.request.user.is_staff
+class TransactionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Transaction
+    template_name = 'restaurant/transaction/transaction_form.html'
+    fields = ['status', 'note']
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form, *args, **kwargs):
+        form.instance.author = self.request.user
+        if form.instance.status == 'retracted_inventory':
+            for sale in Sale.objects.filter(transaction=self.kwargs['pk']):
+                self._increment_inventory_and_retract_sale(sale)
+        return super().form_valid(form)
+
+    def _increment_inventory_and_retract_sale(self, sale):
+        for ingredient in sale.menu_item.ingredients.all():
+            ingredient.name.add(ingredient.quantity * sale.quantity)
+        sale.change_status('valid')

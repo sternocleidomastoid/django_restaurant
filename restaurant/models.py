@@ -110,6 +110,9 @@ class Transaction(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def get_absolute_url(self):
+        return reverse('restaurant-transaction-detail', kwargs={'pk': self.pk})
+
     def change_status(self, new_status):
         self.status = new_status
         self.save()

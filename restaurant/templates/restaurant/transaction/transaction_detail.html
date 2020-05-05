@@ -12,7 +12,7 @@
 
     {% if request.user.is_staff %}
         <div>
-            <a  class="btn btn-secondary" href="{% url 'restaurant-sale-update' object.id %}">Change Status</a>
+            <a  class="btn btn-secondary" href="{% url 'restaurant-transaction-update' object.id %}">Change Status</a>
         </div>
     {% endif %}
 

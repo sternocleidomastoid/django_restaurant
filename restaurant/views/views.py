@@ -29,7 +29,7 @@ def process_transaction(request):
     else:
         trans = _add_new_transaction_to_db(request)
         form, rtotal, trans_id = _get_initial_values_for_template(trans)
-    return render(request, 'restaurant/sale/sale_form.html', {'form': form, 'trans_id': trans_id, 'rtotal': rtotal})
+    return render(request, 'restaurant/process_transaction.html', {'form': form, 'trans_id': trans_id, 'rtotal': rtotal})
 
 
 def _update_db_values(rtotal, trans_id):
