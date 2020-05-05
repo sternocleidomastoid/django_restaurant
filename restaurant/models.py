@@ -110,6 +110,14 @@ class Transaction(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def change_status(self, new_status):
+        self.status = new_status
+        self.save()
+
+    def update_total_price(self, total_price):
+        self.total_price = total_price
+        self.save()
+
 
 class Sale(models.Model):
     transaction = models.ForeignKey(Transaction, related_name="has_sales", on_delete=models.CASCADE)
@@ -136,6 +144,10 @@ class Sale(models.Model):
 
     def get_absolute_url(self):
         return reverse('restaurant-sale-detail', kwargs={'pk': self.pk})
+
+    def change_status(self, new_status):
+        self.status = new_status
+        self.save()
 
 
 class InventoryTopUp(models.Model):

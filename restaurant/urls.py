@@ -31,7 +31,6 @@ from restaurant.views.transaction_views import (#TransactionCreateView,
 urlpatterns = [
     path('', views.home, name='restaurant-home'),
     path('about/', views.about, name='restaurant-about'),
-    #path('transaction/start/', views.process_transaction, name='restaurant-start-transaction'),
 
     path('inventories/', InventoryListView.as_view(), name='restaurant-inventories'),
     path('inventory/<int:pk>/', InventoryDetailView.as_view(), name='restaurant-inventory-detail'),
@@ -51,13 +50,11 @@ urlpatterns = [
     path('menuitem/<int:pk>/update/', MenuItemUpdateView.as_view(), name='restaurant-menuitem-update'),
     path('menuitem/<int:pk>/delete/', MenuItemDeleteView.as_view(), name='restaurant-menuitem-delete'),
 
-    path('transaction/new/', views.process_transaction, name='restaurant-transaction-create'),
     path('sales/', SaleListView.as_view(), name='restaurant-sales'),
     path('sale/<int:pk>/', SaleDetailView.as_view(), name='restaurant-sale-detail'),
     path('sale/<int:pk>/update/', SaleUpdateView.as_view(), name='restaurant-sale-update'),
 
-
-    #path('transactions/new/', TransactionCreateView.as_view(), name='restaurant-transaction-create'),
+    path('transaction/new/', views.process_transaction, name='restaurant-transaction-create'),
     path('transactions/', TransactionListView.as_view(), name='restaurant-transactions'),
     path('transaction/<int:pk>/', TransactionDetailView.as_view(), name='restaurant-transaction-detail'),
 

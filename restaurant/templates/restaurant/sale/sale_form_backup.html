@@ -1,0 +1,35 @@
+{% load crispy_forms_tags %}
+
+{% block content %}
+        {% if object %}
+        <h1>Update Sale status</h1>
+        {% else %}
+        <h1>Add Sale for Transaction {{ trans_id }}</h1>
+        <div>
+            <a class="nav-bar nav" href="{% url 'restaurant-sales' %}">back</a>
+        </div>
+        {% endif %}
+
+
+    <div class="'content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                {{ form | crispy }}
+            </fieldset>
+
+            <div class="form-group">
+                {% if object %}
+                    <button class="btn btn-outline-info" type="submit">Update</button>
+                {% else %}
+                    <div>
+                    <a class="nav-bar nav">Running Total: {{ rtotal }}</a>
+                    </div>
+                    <button class="btn btn-outline-info" name="trans_id__rtotal" value="{{ trans_id }}__{{ rtotal }}" type="submit">
+                        ===============ADD ITEM=============</button></br>
+                    <button class="btn btn-outline-info" name="trans_id__ftotal" value="{{ trans_id }}__{{ rtotal }}" type="submit">FINISH TRANSACTION</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+{% endblock content %}
