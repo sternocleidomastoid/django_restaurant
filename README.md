@@ -12,3 +12,5 @@ STEPS:
     python manage.py shell
     from restaurant.fixtures.populate import populate
     populate()
+
+admin acct is admin:admin
