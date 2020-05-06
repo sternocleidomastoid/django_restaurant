@@ -4,7 +4,7 @@ STEPS:
 
 1. install python3
 2. install and activate virtualenv
-3. install by "pip install -r requirements.cfg" in cmd line
+3. install by "pip3 install -r requirements.cfg" in cmd line
 4. change directory to where manage.py is then:
     python manage.py makemigrations
 5. python manage.py migrate
