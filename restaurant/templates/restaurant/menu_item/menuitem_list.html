@@ -1,11 +1,11 @@
 {% extends "restaurant/base.html" %}
 {% block content %}
-    <h1>Menu Items</h1>
+    <h1>Prices    -   Menu Items</h1>
     {% if request.user.is_staff %}
         <a class="nav-bar nav" href="{% url 'restaurant-menuitem-create' %}">Add MenuItem</a>
     {% endif %}
 
     {% for menu in object_list %}
-        <h3><a  href="{% url 'restaurant-menuitem-detail' menu.id %}">{{ menu.name }} [{{ menu.status }}]</a></h3>
+        <h3><a  href="{% url 'restaurant-menuitem-detail' menu.id %}">{{ menu.price }} - {{ menu.name }} [{{ menu.status }}]</a></h3>
     {% endfor %}
 {% endblock content %}

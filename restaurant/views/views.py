@@ -8,6 +8,7 @@ from restaurant.models import Transaction, MenuItem, Sale
 
 
 def home(request):
+    Transaction.delete_prevalid_transactions()
     return render(request, 'restaurant/home.html')
 
 
@@ -29,7 +30,9 @@ def process_transaction(request):
     else:
         trans = _add_new_transaction_to_db(request)
         form, rtotal, trans_id = _get_initial_values_for_template(trans)
-    return render(request, 'restaurant/process_transaction.html', {'form': form, 'trans_id': trans_id, 'rtotal': rtotal})
+    curr_sales = Sale.objects.filter(transaction=trans_id)
+    return render(request, 'restaurant/process_transaction.html',
+                  {'form': form, 'trans_id': trans_id, 'rtotal': rtotal, 'curr_sales': curr_sales})
 
 
 def _update_db_values(rtotal, trans_id):
@@ -91,7 +94,3 @@ def _get_ftotal_and_trans_id_from_post(request):
     trans_id = int(trans_id)
     ftotal = decimal.Decimal(ftotal)
     return ftotal, trans_id
-
-
-
-

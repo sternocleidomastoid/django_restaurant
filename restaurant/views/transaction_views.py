@@ -8,7 +8,11 @@ from restaurant.models import Transaction, Sale
 class TransactionListView(ListView):
     model = Transaction
     template_name = 'restaurant/transaction/transaction_list.html'
-    ordering = ['-id']
+    ordering = ['-status']
+
+    def get(self, request, *args, **kwargs):
+        Transaction.delete_prevalid_transactions()
+        return super().get(request, *args, **kwargs)
 
 
 class TransactionDetailView(DetailView):

@@ -2,10 +2,10 @@
 {% load crispy_forms_tags %}
 {% block content %}
     {% if object %}
-        <h1>Update Ingredient</h1>
+        <h1>Update MenuItem</h1>
          <a class="nav-bar nav" href="{% url 'restaurant-menuitem-detail' object.id %}">Cancel</a>
     {% else %}
-        <h1>Add Ingredient</h1>
+        <h1>Update MenuItem</h1>
         <div>
             <a class="nav-bar nav" href="{% url 'restaurant-menuitems' %}">back</a>
         </div>
@@ -23,6 +23,10 @@
                 {% else %}
                     <button class="btn btn-outline-info" type="submit">Add</button>
                 {% endif %}
+                <div class="border-top pt-3">
+                    <small class="text-muted">Missing exact ingredient measurement? </small>
+                    <a class="ml-2" href="{% url 'restaurant-ingredient-create' %}">Add here!</a>
+                </div>
             </div>
         </form>
     </div>

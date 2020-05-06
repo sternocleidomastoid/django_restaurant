@@ -10,6 +10,6 @@
             {{ inventory.name }}
             {% if inventory.is_low_level %}<text class="text-danger"> [LOW]</text>{% endif %}
         </a></h3>
-        <p>Total: {{ inventory.total }} {{ inventory.price }}/{{ inventory.unit }}</p>
+        <p>Total: {{ inventory.total }}</p>
     {% endfor %}
 {% endblock content %}

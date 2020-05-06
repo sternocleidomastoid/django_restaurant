@@ -13,9 +13,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'restaurant/main.css' %}">
 
     {% if title %}
-        <title>Restaurant About - {{ title }}</title>
+        <title>Django Restaurant - {{ title }}</title>
     {% else %}
-        <title>Restaurant About</title>
+        <title>Django Restaurant</title>
     {% endif %}
 </head>
 <body>
@@ -29,7 +29,6 @@
       <div class="collapse navbar-collapse" id="navbarToggle">
         <div class="navbar-nav mr-auto">
             <a class="nav-item nav-link" href="{% url 'restaurant-transaction-create' %}">Process Transaction</a>
-            <a class="nav-item nav-link" href="{% url 'restaurant-about' %}">About</a>
             <a class="nav-item nav-link" href="{% url 'restaurant-menuitems' %}">Menu Items</a>
             <a class="nav-item nav-link" href="{% url 'restaurant-inventories' %}">Inventories</a>
             <a class="nav-item nav-link" href="{% url 'restaurant-transactions' %}">Transactions</a>
@@ -83,13 +82,13 @@
                 {% if object %}
                     <button class="btn btn-outline-info" type="submit">Update</button>
                 {% else %}
-                    <div>
-                    <a class="nav-bar nav">Running Total: {{ rtotal }}</a>
-                    </div>
+                <div>
                     <button class="btn btn-outline-info" name="trans_id__rtotal" value="{{ trans_id }}__{{ rtotal }}" type="submit">
-                        ===============ADD ITEM=============</button></br>
+                        ===============ADD ITEM=============</button>
                     <button class="btn btn-outline-info" name="trans_id__ftotal" value="{{ trans_id }}__{{ rtotal }}" type="submit">FINISH TRANSACTION</button>
+                </div>
                 {% endif %}
+
             </div>
         </form>
     </div>
@@ -99,8 +98,13 @@
         <h3>ITEMS</h3>
         <p class='text-muted'>
           <ul class="list-group">
-            <li class="list-group-item list-group-item-light">current list of menu_items in transaction will go here...</li>
+          {% for sale in curr_sales %}
+            <li class="list-group-item list-group-item-light">{{ sale.quantity }} {{ sale.menu_item }} @ {{ sale.menu_item.price}}</li>
+          {% endfor %}
           </ul>
+          <div>
+            <a class="nav-bar nav">Running Total: {{ rtotal }}</a>
+          </div>
         </p>
       </div>
     </div>

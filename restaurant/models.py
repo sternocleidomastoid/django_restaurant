@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.http import HttpResponseBadRequest
 from django.utils import timezone
@@ -121,12 +122,16 @@ class Transaction(models.Model):
         self.total_price = total_price
         self.save()
 
+    @staticmethod
+    def delete_prevalid_transactions():
+        Transaction.objects.filter(status='pre_valid').delete()
+
 
 class Sale(models.Model):
     transaction = models.ForeignKey(Transaction, related_name="has_sales", on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, limit_choices_to={'status': 'available'}, on_delete=models.PROTECT)
     note = models.CharField(max_length=200)
-    quantity = models.IntegerField(default=0)
+    quantity = models.IntegerField(default=0, validators=[MinValueValidator(1), MaxValueValidator(1000)])
 
     PRE_VALID = 'pre_valid'
     VALID = 'valid'
