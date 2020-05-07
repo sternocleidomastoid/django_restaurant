@@ -1,6 +1,6 @@
 {% extends "restaurant/base.html" %}
 {% block content %}
-    <h1>Transactions</h1>
+    <h2>Transaction -- Date -- Total -- Cashier -- Status</h2>
     {% if request.user.is_staff %}
         <a class="nav-bar nav" href="{% url 'restaurant-transaction-create' %}">Process Transaction</a>
     {% endif %}

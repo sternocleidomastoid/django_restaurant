@@ -1,9 +1,11 @@
+from unittest.mock import patch, call
+
 from django.contrib.auth.models import User
 from django.db.models import ProtectedError
 from django.test import TestCase
 from django.urls import reverse
 
-from restaurant.models import Ingredient, Inventory, MenuItemType, MenuItem, Sale, InventoryTopUp
+from restaurant.models import Ingredient, Inventory, MenuItemType, MenuItem, Sale, InventoryTopUp, Transaction
 from mixer.backend.django import mixer
 
 
@@ -87,12 +89,47 @@ class SaleTestCase(TestCase):
     def test_instance(self):
         s = mixer.blend(Sale)
         self.assertTrue(isinstance(s, Sale))
+        self.assertEqual(s.status, 'pre_valid')
 
-    def test__delete_seller__raises_ProtectedError(self):
-        u = mixer.blend(User)
-        mixer.blend(Sale, cashier=u)
-        with self.assertRaises(ProtectedError):
-            u.delete()
+    def test__change_status(self):
+        s = mixer.blend(Sale, status='pre_valid')
+        self.assertEqual(s.status, 'pre_valid')
+        s.change_status('valid')
+        self.assertEqual(s.status, 'valid')
+
+    def test_absolute_url(self):
+        s = mixer.blend(Sale)
+        self.assertEqual(s.get_absolute_url(), reverse('restaurant-sale-detail', args=[str(s.pk)]))
+
+
+class TransactionTestCase(TestCase):
+
+    def test_instance(self):
+        t = mixer.blend(Transaction)
+        self.assertTrue(isinstance(t, Transaction))
+        self.assertEqual(t.status, 'pre_valid')
+        self.assertEqual(t.__str__(), str(t.id))
+
+    def test__change_status(self):
+        t = mixer.blend(Transaction, status='pre_valid')
+        self.assertEqual(t.status, 'pre_valid')
+        t.change_status('valid')
+        self.assertEqual(t.status, 'valid')
+
+    def test_absolute_url(self):
+        t = mixer.blend(Transaction)
+        self.assertEqual(t.get_absolute_url(), reverse('restaurant-transaction-detail', args=[str(t.pk)]))
+
+    def test__update_total_price__works(self):
+        t = mixer.blend(Transaction, total_price=10)
+        self.assertEqual(t.total_price, 10.0)
+        t.update_total_price(15)
+        self.assertEqual(t.total_price, 15.0)
+
+    @patch('restaurant.models.Transaction.objects')
+    def test__delete_prevalid_transactions__works(self, mock_objects):
+        Transaction.delete_prevalid_transactions()
+        mock_objects.assert_has_calls([call.filter(status='pre_valid'), call.filter().delete()])
 
 
 class InventoryTopUpTestCase(TestCase):

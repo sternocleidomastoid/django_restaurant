@@ -55,18 +55,18 @@ class TestMenuItemFormsUpdate(TestCase):
         self.assertTrue(set(self.new_fields.items()).issubset(
             set(MenuItem.objects.get(pk=self.menu.pk).__dict__.items())))
 
-    def test__invalid_status_update__db_entry_does_not_change_due_to_insufficient_inventory(self):
-        self.inv = mixer.blend(Inventory, total=19)
-        self.ing = mixer.blend(Ingredient, name=self.inv, quantity=20.0)
-        self.menu = mixer.blend(MenuItem, ingredients=self.ing, author=self.staff_user)
-        self.new_fields = {'name': self.menu.name, 'price': self.menu.price,
-                           'ingredients': self.ing.pk, 'status': 'available'}
-
-        response = self.client.post(reverse_lazy('restaurant-menuitem-update', kwargs={'pk': self.menu.pk}),
-                                    self.new_fields)
-
-        self.remove_keys_that_do_not_exist_in_db_keys(['ingredients', 'price', 'name'])
-
-        self.assertFalse(set(self.new_fields.items()).issubset(
-            set(MenuItem.objects.get(pk=self.menu.pk).__dict__.items())))
-        self.assertEqual(response.status_code, 400)
+    # def test__invalid_status_update__db_entry_does_not_change_due_to_insufficient_inventory(self):
+    #     self.inv = mixer.blend(Inventory, total=19)
+    #     self.ing = mixer.blend(Ingredient, name=self.inv, quantity=20.0)
+    #     self.menu = mixer.blend(MenuItem, ingredients=self.ing, author=self.staff_user)
+    #     self.new_fields = {'name': self.menu.name, 'price': self.menu.price,
+    #                        'ingredients': self.ing.pk, 'status': 'available'}
+    #
+    #     response = self.client.post(reverse_lazy('restaurant-menuitem-update', kwargs={'pk': self.menu.pk}),
+    #                                 self.new_fields)
+    #
+    #     self.remove_keys_that_do_not_exist_in_db_keys(['ingredients', 'price', 'name'])
+    #
+    #     self.assertFalse(set(self.new_fields.items()).issubset(
+    #         set(MenuItem.objects.get(pk=self.menu.pk).__dict__.items())))
+    #     self.assertEqual(response.status_code, 400)

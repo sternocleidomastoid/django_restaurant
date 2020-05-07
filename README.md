@@ -10,15 +10,15 @@ STEPS:
 
 4. change directory to where manage.py is then:
 
-     python manage.py makemigrations
+     python3 manage.py makemigrations
      
-     python manage.py migrate
+     python3 manage.py migrate
      
-     python manage.py runserver
+     python3 manage.py runserver
 
 7. populate initial data by:
 
-     python manage.py shell
+     python3 manage.py shell
      
      from restaurant.fixtures.populate import populate
      

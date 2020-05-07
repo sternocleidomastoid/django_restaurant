@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.http import HttpResponseBadRequest
@@ -40,13 +41,20 @@ class Inventory(models.Model):
 
 class Ingredient(models.Model):
     name = models.ForeignKey(Inventory, on_delete=models.CASCADE)
-    quantity = models.FloatField()
+    quantity = models.FloatField(default=0, validators=[MinValueValidator(0.001), MaxValueValidator(1000.00)])
 
     def __str__(self):
         return '{} {} {}'.format(self.name.name, self.quantity, self.name.unit)
 
     def get_absolute_url(self):
         return reverse('restaurant-ingredient-detail', kwargs={'pk': self.pk})
+
+    def is_inventory_sufficient(self, menu_quantity):
+        if self.name.get_total() == 0:
+            return False
+        if self.name.get_total() < self.quantity * menu_quantity:
+            return False
+        return True
 
 
 class MenuItem(models.Model):
@@ -119,6 +127,7 @@ class Transaction(models.Model):
         self.save()
 
     def update_total_price(self, total_price):
+        #implement checking of total_price heerrrreeeee
         self.total_price = total_price
         self.save()
 
