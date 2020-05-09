@@ -2,13 +2,8 @@
 {% load crispy_forms_tags %}
 {% block content %}
     {% if object %}
-        <h1>Update Ingredient</h1>
+        <h1>Update Transaction</h1>
          <a class="nav-bar nav" href="{% url 'restaurant-transaction-detail' object.id %}">Cancel</a>
-    {% else %}
-        <h1>Add Ingredient</h1>
-        <div>
-            <a class="nav-bar nav" href="{% url 'restaurant-menuitems' %}">back</a>
-        </div>
     {% endif %}
 
     <div class="'content-section">

@@ -1,3 +1,5 @@
+from _decimal import InvalidOperation
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -41,7 +43,7 @@ class Inventory(models.Model):
 
 class Ingredient(models.Model):
     name = models.ForeignKey(Inventory, on_delete=models.CASCADE)
-    quantity = models.FloatField(default=0, validators=[MinValueValidator(0.001), MaxValueValidator(1000.00)])
+    quantity = models.FloatField(default=1, validators=[MinValueValidator(0.001), MaxValueValidator(1000.00)])
 
     def __str__(self):
         return '{} {} {}'.format(self.name.name, self.quantity, self.name.unit)
@@ -60,7 +62,8 @@ class Ingredient(models.Model):
 class MenuItem(models.Model):
     author = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
-    price = models.DecimalField(max_digits=7, decimal_places=2)
+    price = models.DecimalField(max_digits=7, decimal_places=2,
+                                validators=[MinValueValidator(0.001), MaxValueValidator(10000.00)])
     ingredients = models.ManyToManyField(Ingredient)
 
     AVAILABLE = 'available'
@@ -95,7 +98,7 @@ class MenuItemType(models.Model):
 
 class Transaction(models.Model):
     cashier = models.ForeignKey(User, blank=True, null=True, on_delete=models.PROTECT)
-    note = models.TextField(blank=True)
+    note = models.CharField(max_length=200, default='')
     date = models.DateField(default=timezone.now)
     total_price = models.DecimalField(max_digits=7, decimal_places=2)
 
@@ -126,10 +129,15 @@ class Transaction(models.Model):
         self.status = new_status
         self.save()
 
-    def update_total_price(self, total_price):
-        #implement checking of total_price heerrrreeeee
-        self.total_price = total_price
-        self.save()
+    def total_price_updates_successfully(self, new_total_price):
+        temp = self.total_price
+        try:
+            self.total_price = new_total_price
+            self.save()
+            return True
+        except InvalidOperation:
+            self.total_price = temp
+            return False
 
     @staticmethod
     def delete_prevalid_transactions():
@@ -139,8 +147,8 @@ class Transaction(models.Model):
 class Sale(models.Model):
     transaction = models.ForeignKey(Transaction, related_name="has_sales", on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, limit_choices_to={'status': 'available'}, on_delete=models.PROTECT)
-    note = models.CharField(max_length=200)
-    quantity = models.IntegerField(default=0, validators=[MinValueValidator(1), MaxValueValidator(1000)])
+    note = models.CharField(max_length=200, default='')
+    quantity = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(10000)])
 
     PRE_VALID = 'pre_valid'
     VALID = 'valid'
@@ -164,6 +172,13 @@ class Sale(models.Model):
 
     def change_status(self, new_status):
         self.status = new_status
+        if new_status == 'retracted_inventory':
+            for ingredient in self.menu_item.ingredients.all():
+                ingredient.name.add(self.quantity*ingredient.quantity)
+        self.save()
+
+    def change_note(self, new_note):
+        self.note = new_note
         self.save()
 
 
@@ -172,7 +187,7 @@ class InventoryTopUp(models.Model):
     encoder = models.ForeignKey(User, blank=True, null=True, on_delete=models.PROTECT)
     date = models.DateField(default=timezone.now)
     quantity = models.FloatField()
-    note = models.CharField(max_length=200)
+    note = models.CharField(max_length=200, default='')
 
     VALID = 'valid'
     RETRACTED_INVENTORY = 'retracted_inventory'

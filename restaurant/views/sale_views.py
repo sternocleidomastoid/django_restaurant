@@ -1,8 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from django.urls import reverse_lazy
-from django.http import HttpResponseBadRequest
-
 from restaurant.models import Sale, MenuItem
 
 
@@ -27,8 +24,5 @@ class SaleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        if form.instance.status == 'retracted_inventory':
-            ingredients = MenuItem.objects.get(name=form.instance.menu_item).ingredients.all()
-            for ingredient in ingredients:
-                ingredient.name.add(ingredient.quantity)
+        form.instance.change_status(form.instance.status)
         return super().form_valid(form)

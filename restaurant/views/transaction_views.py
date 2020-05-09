@@ -28,12 +28,7 @@ class TransactionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
     def form_valid(self, form, *args, **kwargs):
         form.instance.author = self.request.user
-        if form.instance.status == 'retracted_inventory':
-            for sale in Sale.objects.filter(transaction=self.kwargs['pk']):
-                self._increment_inventory_and_retract_sale(sale)
+        for sale in Sale.objects.filter(transaction=self.kwargs['pk']):
+            sale.change_status(form.instance.status)
+            sale.change_note(form.instance.note)
         return super().form_valid(form)
-
-    def _increment_inventory_and_retract_sale(self, sale):
-        for ingredient in sale.menu_item.ingredients.all():
-            ingredient.name.add(ingredient.quantity * sale.quantity)
-        sale.change_status('valid')

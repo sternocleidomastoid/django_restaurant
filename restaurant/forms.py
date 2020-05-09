@@ -28,3 +28,6 @@ class UpdateMenuItemForm(ModelForm):
                 if ingredient.quantity > ingredient.name.get_total():
                     raise forms.ValidationError("Ingredient {} is insufficient".format(ingredient.name.name))
         return self.cleaned_data
+
+
+

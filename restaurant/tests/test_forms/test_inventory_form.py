@@ -44,12 +44,21 @@ class TestInventoryFormsUpdate(TestCase):
         self.client.post(reverse_lazy('restaurant-inventory-update', kwargs={'pk': self.inv.pk}),
                          new_fields)
 
-        self.assertTrue(set(new_fields.items()).issubset(set(Inventory.objects.get(pk=self.inv.pk).__dict__.items())))
+        self.inv.refresh_from_db()
+        self.assertEqual(self.inv.total, 99)
+        self.assertEqual(self.inv.low_level_threshold, 100)
+        self.assertEqual(self.inv.price, 1)
+        self.assertEqual(self.inv.unit, 'kg')
 
     def test__invalid_blank_required_field__does_not_change_db_entry(self):
         response = self.client.post(reverse_lazy('restaurant-inventory-update', kwargs={'pk': self.inv.pk}),
                                     {'total': 99.0, 'low_level_threshold': 100.0, 'unit': ''})
 
+        self.inv.refresh_from_db()
+        self.assertEqual(self.inv.total, 10)
+        self.assertEqual(self.inv.low_level_threshold, 10)
+        self.assertEqual(self.inv.price, 1)
+        self.assertEqual(self.inv.unit, 'ml')
         self.assertIn('This field is required.', response.context['form']['unit'].errors)
-        self.assertFalse({100.0, 99.0, 'kg'}.issubset(set(Inventory.objects.get(pk=self.inv.pk).__dict__.values())))
+
 

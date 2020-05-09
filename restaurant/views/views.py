@@ -21,12 +21,8 @@ def about(request):
 def process_transaction(request):
     if request.method == "POST" and request.POST.get('trans_id__final_total'):
         form, rtotal, ftotal, trans_id = _get_request_values_finish_transaction(request)
-        transaction = Transaction.objects.get(id=trans_id)
-        if form.is_valid() and not _is_transaction_total_too_big(transaction, ftotal):
-            _update_inventory_and_sale_db(trans_id)
-            transaction.change_status('valid')
-        # else:
-        #     return HttpResponseBadRequest("something went wrong, please double check inputs")
+        if not _form_validates_and_db_updates_successfully(ftotal):
+            return HttpResponseBadRequest("something went wrong, please double check inputs; total might be too high")
         return redirect('restaurant-transactions')
     elif request.method == "POST":
         form, rtotal, trans_id = _get_request_values_and_process_add_sale(request)
@@ -39,12 +35,13 @@ def process_transaction(request):
                   {'form': form, 'trans_id': trans_id, 'rtotal': rtotal, 'curr_sales': curr_sales})
 
 
-def _is_transaction_total_too_big(trans, rtotal):
-    # try:
-        trans.update_total_price(rtotal)
-    #     return False
-    # except decimal.InvalidOperation:
-    #     return True
+def _form_validates_and_db_updates_successfully(ftotal, form, trans_id):
+    transaction = Transaction.objects.get(id=trans_id)
+    if form.is_valid() and transaction.total_price_updates_successfully(ftotal):
+        _update_inventory_and_sale_db(trans_id)
+        transaction.change_status('valid')
+        return True
+    return False
 
 
 def _update_inventory_and_sale_db(trans_id):
@@ -55,6 +52,7 @@ def _update_inventory_and_sale_db(trans_id):
 def _get_request_values_and_process_add_sale(request):
     form, rtotal, trans_id = _get_request_values_for_add_sale(request)
     if form.is_valid():
+        form.instance.transaction_id = trans_id
         rtotal = _increment_running_total(form, rtotal, trans_id)
         form.save()
     return form, rtotal, trans_id
@@ -82,7 +80,6 @@ def _add_new_transaction_to_db(request):
 def _increment_running_total(form, rtotal, trans_id):
     amount = form.cleaned_data.get('quantity')
     price = MenuItem.objects.get(name=form.instance.menu_item).price
-    form.instance.transaction_id = trans_id
     rtotal += amount * price
     return rtotal
 

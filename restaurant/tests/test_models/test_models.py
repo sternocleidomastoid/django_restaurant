@@ -52,6 +52,19 @@ class IngredientTestCase(TestCase):
         i = mixer.blend(Ingredient)
         self.assertEqual(i.get_absolute_url(), reverse('restaurant-ingredient-detail', args=[str(i.pk)]))
 
+    def test__is_inventory_sufficient__returns_false_if_inventory_short_or_zero(self):
+        inv = mixer.blend(Inventory, total=9)
+        ing = mixer.blend(Ingredient, name=inv, quantity=5)
+        self.assertFalse(ing.is_inventory_sufficient(2))
+        inv = mixer.blend(Inventory, total=0)
+        ing = mixer.blend(Ingredient, name=inv, quantity=5)
+        self.assertFalse(ing.is_inventory_sufficient(1))
+
+    def test__is_inventory_sufficient__returns_true_if_inventory_enough(self):
+        inv = mixer.blend(Inventory, total=9)
+        ing = mixer.blend(Ingredient, name=inv, quantity=5)
+        self.assertTrue(ing.is_inventory_sufficient(1))
+
 
 class MenuItemTestCase(TestCase):
 
@@ -120,11 +133,17 @@ class TransactionTestCase(TestCase):
         t = mixer.blend(Transaction)
         self.assertEqual(t.get_absolute_url(), reverse('restaurant-transaction-detail', args=[str(t.pk)]))
 
-    def test__update_total_price__works(self):
+    def test__update_total_price__returns_true_if_successful(self):
         t = mixer.blend(Transaction, total_price=10)
         self.assertEqual(t.total_price, 10.0)
-        t.update_total_price(15)
+        self.assertTrue(t.total_price_updates_successfully(15))
         self.assertEqual(t.total_price, 15.0)
+
+    def test__update_total_price__returns_false_if_not_successful(self):
+        t = mixer.blend(Transaction, total_price=10)
+        self.assertEqual(t.total_price, 10.0)
+        self.assertFalse(t.total_price_updates_successfully(999999.99))
+        self.assertEqual(t.total_price, 10.0)
 
     @patch('restaurant.models.Transaction.objects')
     def test__delete_prevalid_transactions__works(self, mock_objects):

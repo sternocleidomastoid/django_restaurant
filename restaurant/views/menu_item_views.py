@@ -1,8 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.forms import forms
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.http import HttpResponseBadRequest
 
 from restaurant.forms import UpdateMenuItemForm
 from restaurant.models import MenuItem
