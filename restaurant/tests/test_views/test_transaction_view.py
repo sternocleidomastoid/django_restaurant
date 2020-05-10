@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase, RequestFactory
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from mixer.backend.django import mixer
 from restaurant.views.transaction_views import *
 from restaurant.models import Transaction
@@ -9,7 +9,7 @@ from restaurant.models import Transaction
 class TestPublicTransactionViews(TestCase):
 
     def setUp(self):
-        self.anon_user = mixer.blend(User)
+        self.anon_user = AnonymousUser
         self.factory = RequestFactory()
 
     def test__transaction_list__anyone_can_view(self):

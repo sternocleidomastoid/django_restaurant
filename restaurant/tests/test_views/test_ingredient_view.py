@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase, RequestFactory
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from mixer.backend.django import mixer
 from restaurant.views.ingredient_views import *
 from restaurant.models import Ingredient
@@ -9,7 +9,7 @@ from restaurant.models import Ingredient
 class TestPublicIngredientViews(TestCase):
 
     def setUp(self):
-        self.anon_user = mixer.blend(User)
+        self.anon_user = AnonymousUser
         self.factory = RequestFactory()
 
     def test__ingredient_list__anyone_can_view(self):
@@ -39,8 +39,7 @@ class TestForbiddenIngredientViews(TestCase):
         request = self.factory.get('/')
         request.user = self.anon_user
         with self.assertRaises(PermissionDenied):
-            response = IngredientCreateView.as_view()(request)
-
+            IngredientCreateView.as_view()(request)
         request.user = self.staff
         response = IngredientCreateView.as_view()(request)
         self.assertEqual(response.status_code, 200)

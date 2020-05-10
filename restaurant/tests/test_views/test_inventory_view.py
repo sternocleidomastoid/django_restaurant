@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase, RequestFactory
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from mixer.backend.django import mixer
 from model_mommy import mommy
 
@@ -11,7 +11,7 @@ from restaurant.models import Inventory
 class TestPublicInventoryViews(TestCase):
 
     def setUp(self):
-        self.anon_user = mixer.blend(User)
+        self.anon_user = AnonymousUser
         self.factory = RequestFactory()
 
     def test__inventory_list__anyone_can_view(self):

@@ -45,6 +45,7 @@ class TestTransactionForms(TestCase):
         self.assertEqual(trans.status, 'valid')
         self.assertEqual(trans.total_price, 7)
         for sale in Sale.objects.all():
+            self.assertEqual(sale.transaction, trans)
             self.assertEqual(sale.status, 'valid')
         self.assertEqual(self.inv1.get_total(), 99940)
         self.assertEqual(self.inv2.get_total(), 99985)
@@ -58,4 +59,5 @@ class TestTransactionForms(TestCase):
 
         fields = {'menu_item': self.menu1.id, 'quantity': 2,
                   'finish_transaction_button_pressed': '{}__999999'.format(trans.id)}
-        self.client.post(reverse_lazy('restaurant-transaction-create'), fields)
+        response = self.client.post(reverse_lazy('restaurant-transaction-create'), fields)
+        self.assertEqual(response.status_code, 400)

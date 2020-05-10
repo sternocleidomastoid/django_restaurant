@@ -46,7 +46,7 @@ def _form_validates_and_db_updates_successfully(ftotal, form, trans_id):
 
 def _update_inventory_and_sale_db(trans_id):
     for sale in Sale.objects.filter(transaction=trans_id):
-        _decrement_inventory_and_validate_sale(sale)
+        _decrement_inventory(sale)
 
 
 def _get_request_values_and_process_add_sale(request):
@@ -58,10 +58,9 @@ def _get_request_values_and_process_add_sale(request):
     return form, rtotal, trans_id
 
 
-def _decrement_inventory_and_validate_sale(sale):
+def _decrement_inventory(sale):
     for ingredient in sale.menu_item.ingredients.all():
         ingredient.name.deduct(ingredient.quantity * sale.quantity)
-    sale.change_status('valid')
 
 
 def _get_initial_values_for_template(trans):
