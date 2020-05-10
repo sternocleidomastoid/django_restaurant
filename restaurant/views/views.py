@@ -19,7 +19,7 @@ def about(request):
 
 @login_required()
 def process_transaction(request):
-    if request.method == "POST" and request.POST.get('final_transaction_button_pressed'):
+    if request.method == "POST" and request.POST.get('finish_transaction_button_pressed'):
         form, rtotal, ftotal, trans_id = _get_request_values_finish_transaction(request)
         if not _form_validates_and_db_updates_successfully(ftotal, form, trans_id):
             return HttpResponseBadRequest("something went wrong, please double check inputs; total might be too high")
@@ -86,7 +86,7 @@ def _increment_running_total(form, rtotal, trans_id):
 
 def _get_request_values_finish_transaction(request):
     form = SaleForm(request.POST)
-    trans_id, rtotal = request.POST.get('final_transaction_button_pressed').split("__")
+    trans_id, rtotal = request.POST.get('finish_transaction_button_pressed').split("__")
     trans_id = int(trans_id)
     rtotal = decimal.Decimal(rtotal)
     return form, rtotal, rtotal, trans_id
