@@ -1,5 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
+
+from restaurant.forms import UpdateSaleForm
 from restaurant.models import Sale, MenuItem
 
 
@@ -17,10 +19,12 @@ class SaleDetailView(DetailView):
 class SaleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Sale
     template_name = 'restaurant/sale/sale_form.html'
-    fields = ['status', 'note']
 
     def test_func(self):
         return self.request.user.is_staff
+
+    def get_form_class(self):
+        return UpdateSaleForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user

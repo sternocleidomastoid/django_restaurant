@@ -6,7 +6,7 @@ STEPS:
 
 2. install and activate virtualenv
 
-3. install by "pip3 install -r requirements.cfg" in cmd line
+3. install requred libraries by "pip3 install -r requirements.cfg" in cmd line
 
 4. change directory to where manage.py is then:
 

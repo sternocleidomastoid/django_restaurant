@@ -1,5 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
+
+from restaurant.forms import UpdateTransactionForm
 from restaurant.models import Transaction, Sale
 
 
@@ -26,9 +28,11 @@ class TransactionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     def test_func(self):
         return self.request.user.is_staff
 
+    def get_form_class(self):
+        return UpdateTransactionForm
+
     def form_valid(self, form, *args, **kwargs):
         form.instance.author = self.request.user
-        for sale in Sale.objects.filter(transaction=self.kwargs['pk']):
-            sale.change_status(form.instance.status)
-            sale.change_note(form.instance.note)
+        form.instance.change_status(form.instance.status)
+        form.instance.change_note(form.instance.note)
         return super().form_valid(form)

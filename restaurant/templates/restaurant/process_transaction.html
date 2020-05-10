@@ -83,9 +83,9 @@
                     <button class="btn btn-outline-info" type="submit">Update</button>
                 {% else %}
                 <div>
-                    <button class="btn btn-outline-info" name="trans_id__running_total" value="{{ trans_id }}__{{ rtotal }}" type="submit">
+                    <button class="btn btn-outline-info" name="add_sale_button_pressed" value="{{ trans_id }}__{{ rtotal }}" type="submit">
                         ===============ADD ITEM=============</button>
-                    <button class="btn btn-outline-info" name="trans_id__final_total" value="{{ trans_id }}__{{ rtotal }}" type="submit">
+                    <button class="btn btn-outline-info" name="final_transaction_button_pressed" value="{{ trans_id }}__{{ rtotal }}" type="submit">
                         FINISH TRANSACTION</button>
                 </div>
                 {% endif %}

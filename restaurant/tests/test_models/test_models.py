@@ -104,11 +104,23 @@ class SaleTestCase(TestCase):
         self.assertTrue(isinstance(s, Sale))
         self.assertEqual(s.status, 'pre_valid')
 
-    def test__change_status(self):
+    def test__change_status__simple_change_works(self):
         s = mixer.blend(Sale, status='pre_valid')
         self.assertEqual(s.status, 'pre_valid')
         s.change_status('valid')
         self.assertEqual(s.status, 'valid')
+
+    def test__change_status_to_retracted_inventory__adds_back_inventory(self):
+        inv1 = mixer.blend(Inventory, total=21)
+        ing1 = mixer.blend(Ingredient, name=inv1, quantity=20.0)
+        inv2 = mixer.blend(Inventory, total=10)
+        ing2 = mixer.blend(Ingredient, name=inv2, quantity=15.0)
+        menu = mixer.blend(MenuItem, name='spaghetti', ingredients=[ing1, ing2], price=5.25)
+        s = mixer.blend(Sale, menu_item=menu, quantity=2, status='valid')
+        s.change_status('retracted_inventory')
+        self.assertEqual(s.status, 'retracted_inventory')
+        self.assertEqual(inv1.get_total(), 61)
+        self.assertEqual(inv2.get_total(), 40)
 
     def test_absolute_url(self):
         s = mixer.blend(Sale)

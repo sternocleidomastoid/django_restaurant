@@ -19,9 +19,9 @@ def about(request):
 
 @login_required()
 def process_transaction(request):
-    if request.method == "POST" and request.POST.get('trans_id__final_total'):
+    if request.method == "POST" and request.POST.get('final_transaction_button_pressed'):
         form, rtotal, ftotal, trans_id = _get_request_values_finish_transaction(request)
-        if not _form_validates_and_db_updates_successfully(ftotal):
+        if not _form_validates_and_db_updates_successfully(ftotal, form, trans_id):
             return HttpResponseBadRequest("something went wrong, please double check inputs; total might be too high")
         return redirect('restaurant-transactions')
     elif request.method == "POST":
@@ -86,7 +86,7 @@ def _increment_running_total(form, rtotal, trans_id):
 
 def _get_request_values_finish_transaction(request):
     form = SaleForm(request.POST)
-    trans_id, rtotal = request.POST.get('trans_id__final_total').split("__")
+    trans_id, rtotal = request.POST.get('final_transaction_button_pressed').split("__")
     trans_id = int(trans_id)
     rtotal = decimal.Decimal(rtotal)
     return form, rtotal, rtotal, trans_id
@@ -94,7 +94,7 @@ def _get_request_values_finish_transaction(request):
 
 def _get_request_values_for_add_sale(request):
     form = SaleForm(request.POST)
-    trans_id, ftotal = request.POST.get('trans_id__running_total').split("__")
+    trans_id, ftotal = request.POST.get('add_sale_button_pressed').split("__")
     trans_id = int(trans_id)
     ftotal = decimal.Decimal(ftotal)
     return form, ftotal, trans_id

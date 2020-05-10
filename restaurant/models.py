@@ -126,7 +126,15 @@ class Transaction(models.Model):
         return reverse('restaurant-transaction-detail', kwargs={'pk': self.pk})
 
     def change_status(self, new_status):
+        for sale in Sale.objects.filter(transaction=self.id):
+            sale.change_status(new_status)
         self.status = new_status
+        self.save()
+
+    def change_note(self, new_note):
+        for sale in Sale.objects.filter(transaction=self.id):
+            sale.change_note(new_note)
+        self.note = new_note
         self.save()
 
     def total_price_updates_successfully(self, new_total_price):
@@ -171,10 +179,11 @@ class Sale(models.Model):
         return reverse('restaurant-sale-detail', kwargs={'pk': self.pk})
 
     def change_status(self, new_status):
-        self.status = new_status
+        #self.status here is already new_status so should be transferred to clean or somewhere
         if new_status == 'retracted_inventory':
             for ingredient in self.menu_item.ingredients.all():
                 ingredient.name.add(self.quantity*ingredient.quantity)
+        self.status = new_status
         self.save()
 
     def change_note(self, new_note):
