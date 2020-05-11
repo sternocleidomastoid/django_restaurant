@@ -4,9 +4,7 @@
     {% if request.user.is_staff %}
         <a class="nav-bar nav" href="{% url 'restaurant-inventory-create' %}">Add Inventory Item</a>
     {% endif %}
-    {% if request.user.is_authenticated %}
-        <a class="nav-bar nav" href="{% url 'restaurant-low-inventories' %}">View Low Supply Inventories</a>
-    {% endif %}
+        <a class="nav-bar nav" href="{% url 'restaurant-inventories' %}">All Inventories</a>
 
     {% for inventory in object_list %}
         <h3><a  href="{% url 'restaurant-inventory-detail' inventory.id %}">

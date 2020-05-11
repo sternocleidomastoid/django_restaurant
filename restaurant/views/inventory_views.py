@@ -11,6 +11,12 @@ class InventoryListView(ListView):
     ordering = ['name']
 
 
+class InventoryLowListView(ListView):
+    model = Inventory
+    template_name = 'restaurant/inventory/inventory_low_list.html'
+    queryset = [i for i in Inventory.objects.all() if i.is_low_level()]
+
+
 class InventoryDetailView(DetailView):
     model = Inventory
     template_name = 'restaurant/inventory/inventory_detail.html'

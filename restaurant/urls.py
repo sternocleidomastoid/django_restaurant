@@ -10,8 +10,8 @@ from restaurant.views.inventory_views import (InventoryListView,
                                               InventoryDetailView,
                                               InventoryCreateView,
                                               InventoryUpdateView,
-                                              InventoryDeleteView
-                                              )
+                                              InventoryDeleteView,
+                                              InventoryLowListView)
 
 from restaurant.views.menu_item_views import (MenuItemListView,
                                               MenuItemDetailView,
@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('transaction/new/', views.process_transaction, name='restaurant-transaction-create'),
 
+    path('lowinventories/', InventoryLowListView.as_view(), name='restaurant-low-inventories'),
     path('inventories/', InventoryListView.as_view(), name='restaurant-inventories'),
     path('inventory/<int:pk>/', InventoryDetailView.as_view(), name='restaurant-inventory-detail'),
     path('inventory/new/', InventoryCreateView.as_view(), name='restaurant-inventory-create'),
