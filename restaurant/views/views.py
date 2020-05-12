@@ -55,7 +55,7 @@ def _get_values_for_template_and_process_add_sale(request):
     if form.is_valid():
         form.instance.transaction_id = trans_id
         form.save()
-        rtotal = _increment_running_total(form, rtotal, trans_id)
+        rtotal = _increment_running_total(form, rtotal)
     return form, rtotal, trans_id
 
 
@@ -72,7 +72,7 @@ def _get_newly_added_transaction(request):
     return trans
 
 
-def _increment_running_total(form, rtotal, trans_id):
+def _increment_running_total(form, rtotal):
     amount = form.cleaned_data.get('quantity')
     price = MenuItem.objects.get(name=form.instance.menu_item).price
     rtotal += amount * price

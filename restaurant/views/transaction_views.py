@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView
 
 from restaurant.forms import UpdateTransactionForm
 from restaurant.models import Transaction, Sale
@@ -8,7 +8,7 @@ from restaurant.models import Transaction, Sale
 class TransactionListView(ListView):
     model = Transaction
     template_name = 'restaurant/transaction/transaction_list.html'
-    ordering = ['-status']
+    ordering = ['-date']
 
     def get(self, request, *args, **kwargs):
         Transaction.delete_prevalid_transactions()

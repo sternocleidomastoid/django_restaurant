@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
 from restaurant.forms import UpdateSaleForm
-from restaurant.models import Sale, MenuItem
+from restaurant.models import Sale
 
 
 class SaleListView(ListView):
