@@ -179,7 +179,6 @@ class Sale(models.Model):
         return reverse('restaurant-sale-detail', kwargs={'pk': self.pk})
 
     def change_status(self, new_status):
-        #self.status here is already new_status so should be transferred to clean or somewhere
         if new_status == 'retracted_inventory':
             for ingredient in self.menu_item.ingredients.all():
                 ingredient.name.add(self.quantity*ingredient.quantity)

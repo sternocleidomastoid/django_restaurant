@@ -8,8 +8,8 @@
 
     {% for inventory in object_list %}
         <h3><a  href="{% url 'restaurant-inventory-detail' inventory.id %}">
-            {{ inventory.total }} -- {{ inventory.name }}
-            {% if inventory.is_low_level %}<text class="text-danger"> [LOW]</text>{% endif %}
+            {% if inventory.is_low_level %}{{ inventory.total }} -- {{ inventory.name }}
+            <text class="text-danger">[LOW]</text>{% endif %}
         </a></h3>
     {% endfor %}
 {% endblock content %}
