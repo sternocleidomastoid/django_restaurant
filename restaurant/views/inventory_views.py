@@ -5,20 +5,29 @@ from django.urls import reverse_lazy
 from restaurant.models import Inventory
 
 
-class InventoryListView(ListView):
+class InventoryListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Inventory
     template_name = 'restaurant/inventory/inventory_list.html'
     ordering = ['name']
 
+    def test_func(self):
+        return self.request.user.is_staff
 
-class InventoryLowListView(ListView):
+
+class InventoryLowListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Inventory
     template_name = 'restaurant/inventory/inventory_low_list.html'
 
+    def test_func(self):
+        return self.request.user.is_staff
 
-class InventoryDetailView(DetailView):
+
+class InventoryDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Inventory
     template_name = 'restaurant/inventory/inventory_detail.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 class InventoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):

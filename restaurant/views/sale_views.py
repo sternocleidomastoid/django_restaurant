@@ -5,15 +5,21 @@ from restaurant.forms import UpdateSaleForm
 from restaurant.models import Sale
 
 
-class SaleListView(ListView):
+class SaleListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Sale
     template_name = 'restaurant/sale/sale_list.html'
     ordering = ['-transaction']
 
+    def test_func(self):
+        return self.request.user.is_staff
 
-class SaleDetailView(DetailView):
+
+class SaleDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Sale
     template_name = 'restaurant/sale/sale_detail.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 class SaleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

@@ -5,7 +5,7 @@ from restaurant.forms import UpdateTransactionForm
 from restaurant.models import Transaction, Sale
 
 
-class TransactionListView(ListView):
+class TransactionListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Transaction
     template_name = 'restaurant/transaction/transaction_list.html'
     ordering = ['-date']
@@ -14,10 +14,16 @@ class TransactionListView(ListView):
         Transaction.delete_prevalid_transactions()
         return super().get(request, *args, **kwargs)
 
+    def test_func(self):
+        return self.request.user.is_staff
 
-class TransactionDetailView(DetailView):
+
+class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Transaction
     template_name = 'restaurant/transaction/transaction_detail.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 class TransactionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

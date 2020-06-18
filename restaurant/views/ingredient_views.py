@@ -5,15 +5,21 @@ from django.urls import reverse_lazy
 from restaurant.models import Ingredient
 
 
-class IngredientListView(ListView):
+class IngredientListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Ingredient
     template_name = 'restaurant/ingredient/ingredient_list.html'
     ordering = ['name']
 
+    def test_func(self):
+        return self.request.user.is_staff
 
-class IngredientDetailView(DetailView):
+
+class IngredientDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Ingredient
     template_name = 'restaurant/ingredient/ingredient_detail.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 class IngredientCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):

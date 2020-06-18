@@ -27,11 +27,15 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarToggle">
         <div class="navbar-nav mr-auto">
-            <a class="nav-item nav-link" href="{% url 'restaurant-transaction-create' %}">Process Transaction</a>
+            {% if request.user.is_staff %}
+                <a class="nav-item nav-link" href="{% url 'restaurant-transaction-create' %}">Process Transaction</a>
+            {% endif %}
             <a class="nav-item nav-link" href="{% url 'restaurant-menuitems' %}">Menu Items</a>
-            <a class="nav-item nav-link" href="{% url 'restaurant-inventories' %}">Inventories</a>
-            <a class="nav-item nav-link" href="{% url 'restaurant-transactions' %}">Transactions</a>
-            <a class="nav-item nav-link" href="{% url 'restaurant-sales' %}">Sales</a>
+            {% if request.user.is_staff %}
+                <a class="nav-item nav-link" href="{% url 'restaurant-inventories' %}">Inventories</a>
+                <a class="nav-item nav-link" href="{% url 'restaurant-transactions' %}">Transactions</a>
+                <a class="nav-item nav-link" href="{% url 'restaurant-sales' %}">Sales</a>
+            {% endif %}
         </div>
         <!-- Navbar Right Side -->
         <div class="navbar-nav">
