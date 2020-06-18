@@ -13,9 +13,12 @@ class MenuItemListView(ListView):
     #disable all menu item with empty ingredient
 
 
-class MenuItemDetailView(DetailView):
+class MenuItemDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = MenuItem
     template_name = 'restaurant/menu_item/menuitem_detail.html'
+
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 class MenuItemCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
