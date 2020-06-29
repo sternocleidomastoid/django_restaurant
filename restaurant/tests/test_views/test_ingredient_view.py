@@ -20,7 +20,7 @@ class TestForbiddenIngredientViews(TestCase):
             IngredientListView.as_view()(request)
         request.user = self.staff
         response = IngredientListView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 2002)
         self.assertEqual(response.template_name[0], 'restaurant/ingredient/ingredient_list.html')
 
     def test__ingredient_details__only_staff_can_view(self):
