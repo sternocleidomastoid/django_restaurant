@@ -25,7 +25,7 @@ SECRET_KEY = 'gp=n#ka43uncv3v6)a+uykfk#eees$n$8a7$mn1otna#c^oj)0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['maoni.akongkananan.com', '13.211.202.236']
 
 
 # Application definition
@@ -118,8 +118,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-
 STATIC_URL = '/static/'
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+STATICFILES_DIRS = (
+('assets', os.path.join(PROJECT_DIR, '../restaurant/static')),
+)
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'restaurant-home'
 LOGIN_URL = 'login'
