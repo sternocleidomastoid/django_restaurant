@@ -4,13 +4,28 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  test:
+  unit and integration test:
     executor: python/default
     steps:
       - checkout
       #- python/load-cache
       - python/install-deps
-      #- python/save-cache
+      - python/save-cache
+      - run:
+          command: |
+            # pytest would be a dep in requirements.txt adfdf
+            pytest
+          name: Test
+      - store_artifacts:
+          path: htmlcov
+
+  UI test:
+    executor: python/default
+    steps:
+      - checkout
+      #- python/load-cache
+      - python/install-deps
+      - python/save-cache
       - run:
           command: |
             # pytest would be a dep in requirements.txt adfdf
@@ -20,4 +35,4 @@ jobs:
 workflows:
   main:
     jobs:
-      - test
+      - unit and integration test
