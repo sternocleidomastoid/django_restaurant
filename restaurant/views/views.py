@@ -20,19 +20,32 @@ def about(request):
 @login_required()
 def process_transaction(request):
     if request.method == "POST" and request.POST.get('finish_transaction_button_pressed'):
-        form, rtotal, ftotal, trans_id = _get_values_for_finishing_transaction(request)
-        if not _form_validates_and_transaction_and_inventories_updates_successfully(ftotal, form, trans_id):
-            return HttpResponseBadRequest("something went wrong, please double check inputs; total might be too high")
-        return redirect('restaurant-transactions')
+        return _finalize_transaction(request)
     elif request.method == "POST":
-        form, rtotal, trans_id = _get_values_for_template_and_process_add_sale(request)
+        form, running_total, trans_id = _get_request_values_for_add_sale(request)
+        running_total = add_sale_to_running_total_if_valid(form, running_total, trans_id)
     else:
         Transaction.delete_prevalid_transactions()
-        transaction = _get_newly_added_transaction(request)
-        form, rtotal, trans_id = _get_initial_values_for_template(transaction)
+        transaction = _get_new_transaction(request)
+        form, running_total, trans_id = _get_initial_values_for_template(transaction)
     curr_sales = Sale.objects.filter(transaction=trans_id)
     return render(request, 'restaurant/process_transaction.html',
-                  {'form': form, 'trans_id': trans_id, 'rtotal': rtotal, 'curr_sales': curr_sales})
+                  {'form': form, 'trans_id': trans_id, 'rtotal': running_total, 'curr_sales': curr_sales})
+
+
+def add_sale_to_running_total_if_valid(form, rtotal, trans_id):
+    if form.is_valid():
+        form.instance.transaction_id = trans_id
+        form.save()
+        rtotal = _increment_running_total(form, rtotal)
+    return rtotal
+
+
+def _finalize_transaction(request):
+    form, rtotal, ftotal, trans_id = _get_values_for_finishing_transaction(request)
+    if not _form_validates_and_transaction_and_inventories_updates_successfully(ftotal, form, trans_id):
+        return HttpResponseBadRequest("something went wrong, please double check inputs; total might be too high")
+    return redirect('restaurant-transactions')
 
 
 def _form_validates_and_transaction_and_inventories_updates_successfully(ftotal, form, trans_id):
@@ -50,15 +63,6 @@ def _decrement_inventories(trans_id):
             ingredient.name.deduct(ingredient.quantity * sale.quantity)
 
 
-def _get_values_for_template_and_process_add_sale(request):
-    form, rtotal, trans_id = _get_request_values_for_add_sale(request)
-    if form.is_valid():
-        form.instance.transaction_id = trans_id
-        form.save()
-        rtotal = _increment_running_total(form, rtotal)
-    return form, rtotal, trans_id
-
-
 def _get_initial_values_for_template(trans):
     trans_id = trans.id
     rtotal = 0
@@ -66,7 +70,7 @@ def _get_initial_values_for_template(trans):
     return form, rtotal, trans_id
 
 
-def _get_newly_added_transaction(request):
+def _get_new_transaction(request):
     trans = Transaction(cashier=request.user, total_price=0)
     trans.save()
     return trans
