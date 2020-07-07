@@ -27,3 +27,5 @@ STEPS:
 8. view project at http://localhost:8000
 
 admin acct is admin:admin
+
+viewable at http://13.211.202.236:8000/

@@ -64,7 +64,7 @@
         {% if object %}
         <h1>Update Sale status</h1>
         {% else %}
-        <h1>Add Sale for Transaction {{ trans_id }}</h1>
+        <h1>Transaction {{ trans_id }}</h1>
         <div>
             <a class="nav-bar nav" href="{% url 'restaurant-sales' %}">back</a>
         </div>
@@ -86,7 +86,7 @@
                     <button class="btn btn-outline-info" name="add_sale_button_pressed" value="{{ trans_id }}__{{ rtotal }}" type="submit">
                         ===============ADD ITEM=============</button>
                     <button class="btn btn-outline-info" name="finish_transaction_button_pressed" value="{{ trans_id }}__{{ rtotal }}" type="submit">
-                        FINISH TRANSACTION</button>
+                        FINISH!</button>
                 </div>
                 {% endif %}
 
