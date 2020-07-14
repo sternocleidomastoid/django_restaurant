@@ -2,10 +2,12 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from mixer.auto import mixer
+import pytest
 
 from restaurant.models import MenuItem, Inventory, Ingredient, Sale, Transaction
 
 
+@pytest.mark.integration
 class TestTransactionFormsUpdate(TestCase):
 
     def setUp(self):

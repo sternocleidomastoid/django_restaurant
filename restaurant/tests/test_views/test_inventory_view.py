@@ -25,6 +25,16 @@ class TestForbiddenInventoryViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.template_name[0], 'restaurant/inventory/inventory_list.html')
 
+    def test__inventory_low_list__only_staff_can_view(self):
+        request = self.factory.get('/')
+        request.user = self.anon_user
+        with self.assertRaises(PermissionDenied):
+            InventoryListView.as_view()(request)
+        request.user = self.staff
+        response = InventoryLowListView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.template_name[0], 'restaurant/inventory/inventory_low_list.html')
+
     def test__inventory_details__only_staff_can_view(self):
         inv = mixer.blend(Inventory)
         request = self.factory.get('/')

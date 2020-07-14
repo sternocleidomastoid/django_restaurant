@@ -3,8 +3,10 @@ from mixer.auto import mixer
 
 from restaurant.forms import SaleForm, UpdateMenuItemForm
 from restaurant.models import MenuItem, Inventory, Ingredient
+import pytest
 
 
+@pytest.mark.unit
 class SaleFormTests(TestCase):
     def test__correct_data__validates(self):
         m = mixer.blend(MenuItem, status='available')
@@ -43,6 +45,7 @@ class SaleFormTests(TestCase):
         self.assertEqual(form.errors['__all__'], ['Ingredient {} is insufficient or empty'.format(ing.name.name)])
 
 
+@pytest.mark.unit
 class UpdateMenuItemFormTestCase(TestCase):
 
     def test__correct_data__validates(self):
