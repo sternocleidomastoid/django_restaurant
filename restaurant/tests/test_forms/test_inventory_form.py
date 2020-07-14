@@ -4,8 +4,10 @@ from django.urls import reverse_lazy
 from mixer.auto import mixer
 
 from restaurant.models import Inventory
+import pytest
 
 
+@pytest.mark.unit
 class TestInventoryFormsCreate(TestCase):
 
     def setUp(self):
@@ -28,6 +30,7 @@ class TestInventoryFormsCreate(TestCase):
         self.assertEqual(Inventory.objects.count(), 0)
 
 
+@pytest.mark.unit
 class TestInventoryFormsUpdate(TestCase):
 
     def setUp(self):

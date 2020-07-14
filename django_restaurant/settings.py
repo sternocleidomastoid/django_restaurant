@@ -25,7 +25,7 @@ SECRET_KEY = 'gp=n#ka43uncv3v6)a+uykfk#eees$n$8a7$mn1otna#c^oj)0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['maoni.akongkananan.com', '13.211.202.236']
+ALLOWED_HOSTS = ['maoni.akongkananan.com', '13.211.202.236', 'localhost']
 
 
 # Application definition
