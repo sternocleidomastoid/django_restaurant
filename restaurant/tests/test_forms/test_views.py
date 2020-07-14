@@ -4,8 +4,10 @@ from django.urls import reverse_lazy
 from mixer.auto import mixer
 
 from restaurant.models import MenuItem, Inventory, Ingredient, Sale, Transaction
+import pytest
 
 
+@pytest.mark.integration
 class TestTransactionForms(TestCase):
 
     def setUp(self):
@@ -49,6 +51,33 @@ class TestTransactionForms(TestCase):
             self.assertEqual(sale.status, 'valid')
         self.assertEqual(self.inv1.get_total(), 99940)
         self.assertEqual(self.inv2.get_total(), 99985)
+
+    def test__valid_full_transaction__adds_unites_same_sales_and_deducts_inventory(self):
+        self.client.get(reverse_lazy('restaurant-transaction-create'))
+        trans = Transaction.objects.all().first()
+
+        fields = {'menu_item': self.menu1.id, 'quantity': 1, 'add_sale_button_pressed': '{}__0'.format(trans.id)}
+        self.client.post(reverse_lazy('restaurant-transaction-create'), fields)
+
+        self.assertEqual(Transaction.objects.count(), 1)
+        self.assertEqual(Sale.objects.count(), 1)
+
+        fields = {'menu_item': self.menu1.id, 'quantity': 1, 'add_sale_button_pressed': '{}__4'.format(trans.id)}
+        self.client.post(reverse_lazy('restaurant-transaction-create'), fields)
+
+        self.assertEqual(Transaction.objects.count(), 1)
+        self.assertEqual(Sale.objects.count(), 1)
+
+        fields = {'menu_item': self.menu1.id, 'quantity': 2, 'finish_transaction_button_pressed': '{}__7'.format(trans.id)}
+        self.client.post(reverse_lazy('restaurant-transaction-create'), fields)
+
+        trans.refresh_from_db()
+        self.assertEqual(trans.status, 'valid')
+        self.assertEqual(trans.total_price, 7)
+        for sale in Sale.objects.all():
+            self.assertEqual(sale.transaction, trans)
+            self.assertEqual(sale.status, 'valid')
+        self.assertEqual(self.inv1.get_total(), 99960)
 
     def test__invalid_full_transaction__fails_due_to_unrealistic_total(self):
         self.client.get(reverse_lazy('restaurant-transaction-create'))

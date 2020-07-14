@@ -23,7 +23,7 @@ def process_transaction(request):
         return _finalize_transaction(request)
     elif request.method == "POST":
         form, running_total, trans_id = _get_request_values_for_add_sale(request)
-        running_total = add_sale_to_running_total_if_valid(form, running_total, trans_id)
+        running_total = _add_sale_to_running_total_if_valid(form, running_total, trans_id)
     else:
         Transaction.delete_prevalid_transactions()
         transaction = _get_new_transaction(request)
@@ -33,10 +33,16 @@ def process_transaction(request):
                   {'form': form, 'trans_id': trans_id, 'rtotal': running_total, 'curr_sales': curr_sales})
 
 
-def add_sale_to_running_total_if_valid(form, rtotal, trans_id):
+def _add_sale_to_running_total_if_valid(form, rtotal, trans_id):
     if form.is_valid():
-        form.instance.transaction_id = trans_id
-        form.save()
+        current_sales = Sale.objects.filter(transaction=trans_id)
+        if form.instance.menu_item not in [i.menu_item for i in current_sales]:
+            form.instance.transaction_id = trans_id
+            form.save()
+        else:
+            sale = current_sales.filter(menu_item=form.instance.menu_item).first()
+            sale.quantity += form.instance.quantity
+            sale.save()
         rtotal = _increment_running_total(form, rtotal)
     return rtotal
 

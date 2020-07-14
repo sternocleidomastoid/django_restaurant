@@ -4,8 +4,10 @@ from django.urls import reverse_lazy
 from mixer.auto import mixer
 
 from restaurant.models import MenuItem, Inventory, Ingredient, Sale, Transaction
+import pytest
 
 
+@pytest.mark.integration
 class TestSaleFormsUpdate(TestCase):
 
     def setUp(self):
